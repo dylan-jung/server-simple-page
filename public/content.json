@@ -1,0 +1,19 @@
+{
+  "title": "test",
+  "posterUrl": "https://qrcodethumb-phinf.pstatic.net//20251123_69/1763869770334TT0XP_PNG/51755361_1763869543386.png",
+  "slides": [
+    {
+      "label": "발표자료 다운로드",
+      "url": "https://storage.urbanscience.uos.ac.kr/data/(NSCF2025)Program%20Book_20251130_fin.pdf"
+    }
+  ],
+  "video": {
+    "youtubeId": "v5al_cwvkJQ"
+  },
+  "photos": [
+    {
+      "thumb": "https://qrcodethumb-phinf.pstatic.net//20251123_69/1763869770334TT0XP_PNG/51755361_1763869543386.png",
+      "original": "https://qrcodethumb-phinf.pstatic.net//20251123_69/1763869770334TT0XP_PNG/51755361_1763869543386.png"
+    }
+  ]
+}

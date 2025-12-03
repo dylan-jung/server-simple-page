@@ -1,0 +1,13 @@
+version: "3.9"
+
+services:
+  web:
+    image: nginx:alpine
+    container_name: simple-page-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/htpasswd:/etc/nginx/.htpasswd:ro
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./public:/usr/share/nginx/html
+    restart: unless-stopped

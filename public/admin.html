@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>행사 페이지 관리자</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      background: #f3f4f6;
+      color: #111827;
+    }
+
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 20px 16px 40px;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      margin-bottom: 4px;
+    }
+
+    .subtitle {
+      font-size: 0.9rem;
+      color: #6b7280;
+      margin-bottom: 16px;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 18px 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.06);
+    }
+
+    .card h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card h3 {
+      margin-top: 16px;
+      margin-bottom: 6px;
+      font-size: 0.95rem;
+    }
+
+    .card small {
+      color: #9ca3af;
+      font-size: 0.8rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-top: 10px;
+      margin-bottom: 4px;
+    }
+
+    input[type="text"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      font-size: 0.9rem;
+    }
+
+    textarea {
+      min-height: 60px;
+      resize: vertical;
+    }
+
+    .row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .row > div {
+      flex: 1;
+      min-width: 120px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      background: #e5e7eb;
+      color: #4b5563;
+      margin-left: 4px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: #111827;
+      color: #ffffff;
+      margin-top: 10px;
+    }
+
+    .btn.secondary {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    .btn.small {
+      padding: 6px 10px;
+      font-size: 0.8rem;
+    }
+
+    .btn + .btn {
+      margin-left: 6px;
+    }
+
+    .chip {
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #4f46e5;
+      margin-left: 4px;
+    }
+
+    .item-list {
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 10px;
+      margin-top: 8px;
+      background: #f9fafb;
+    }
+
+    .item {
+      border-radius: 10px;
+      padding: 8px;
+      margin-bottom: 8px;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+    }
+
+    .item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .item-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 6px;
+      font-size: 0.8rem;
+    }
+
+    input[type="checkbox"] {
+      transform: scale(1.1);
+    }
+
+    .status {
+      margin-top: 12px;
+      font-size: 0.85rem;
+      color: #6b7280;
+    }
+
+    .status strong {
+      color: #111827;
+    }
+
+    .danger {
+      color: #b91c1c;
+    }
+
+    @media (min-width: 768px) {
+      .card {
+        padding: 20px 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>행사 페이지 관리자</h1>
+
+    <div class="card">
+      <h2>기본 정보</h2>
+      <label>행사 제목</label>
+      <input type="text" id="title" />
+
+
+    </div>
+
+    <div class="card">
+      <h2>포스터</h2>
+      <label>포스터 이미지 URL</label>
+      <input type="text" id="posterUrl" placeholder="예: https://..." />
+
+    </div>
+
+    <div class="card">
+      <h2>📂 발표자료</h2>
+
+      <h3>발표자료 버튼 목록 <span class="chip">slides 배열</span></h3>
+      <small>버튼을 여러 개 둘 수 있습니다. (예: PDF, PPT)</small>
+
+      <div class="item-list" id="slidesList"></div>
+      <button class="btn small secondary" type="button" id="addSlideBtn">+ 버튼 추가</button>
+    </div>
+
+    <div class="card">
+      <h2>🎥 녹화 영상</h2>
+
+
+      <div class="row">
+        <div>
+          <label>유튜브 영상 ID</label>
+          <input type="text" id="youtubeId" placeholder="예: https://youtu.be/abcd1234 → abcd1234" />
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📸 사진첩</h2>
+      
+      <h3>사진 목록 <span class="chip">photos 배열</span></h3>
+      <small>각 항목은 썸네일/원본 URL을 링크로 넣어 주세요.</small>
+
+      <div class="item-list" id="photosList"></div>
+      <button class="btn small secondary" type="button" id="addPhotoBtn">+ 사진 추가</button>
+    </div>
+
+    <div class="card">
+        <h2>💾 저장</h2>
+        <button class="btn" type="button" id="saveServerBtn">서버에 저장하기</button>
+        <p class="subtitle">* 서버에 저장하기 버튼을 눌러야 변경사항이 적용됩니다.</p>
+        <p class="status" id="status"></p>
+    </div>
+  </div>
+
+  <script>
+    const statusEl = document.getElementById('status');
+
+    function setStatus(msg, isError = false) {
+      statusEl.innerHTML = isError ? '<span class="danger">' + msg + '</span>' : msg;
+    }
+
+    // --- slides / photos 항목 DOM 생성 헬퍼 ---
+    function createSlideItem(slide, index, onRemove) {
+      const div = document.createElement('div');
+      div.className = 'item';
+
+      div.innerHTML = `
+        <div class="item-header">
+          <div class="item-title">버튼 #${index + 1}</div>
+          <button type="button" class="btn small secondary">삭제</button>
+        </div>
+        <label>라벨 (버튼 글자)</label>
+        <input type="text" class="slide-label" value="${slide.label || ''}" />
+
+        <label>파일/링크 URL</label>
+        <input type="text" class="slide-url" value="${slide.url || ''}" />
+
+
+      `;
+
+      const removeBtn = div.querySelector('button');
+      removeBtn.addEventListener('click', onRemove);
+
+      return div;
+    }
+
+    function createPhotoItem(photo, index, onRemove) {
+      const div = document.createElement('div');
+      div.className = 'item';
+
+      div.innerHTML = `
+        <div class="item-header">
+          <div class="item-title">사진 #${index + 1}</div>
+          <button type="button" class="btn small secondary">삭제</button>
+        </div>
+        <label>썸네일 URL (thumb)</label>
+        <input type="text" class="photo-thumb" value="${photo.thumb || ''}" />
+
+        <label>원본 URL (original)</label>
+        <input type="text" class="photo-original" value="${photo.original || ''}" />
+
+
+      `;
+
+      const removeBtn = div.querySelector('button');
+      removeBtn.addEventListener('click', onRemove);
+
+      return div;
+    }
+
+    // --- content.json 불러오기 ---
+    async function loadContent() {
+      try {
+        setStatus('content.json을 불러오는 중입니다...');
+        const res = await fetch('content.json?cache=' + Date.now());
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        setStatus('content.json 불러오기 완료');
+
+        // 기본
+        document.getElementById('title').value = data.title || '';
+
+
+        // 포스터
+        document.getElementById('posterUrl').value = data.posterUrl || '';
+
+        // 발표자료
+
+        const slidesList = document.getElementById('slidesList');
+        slidesList.innerHTML = '';
+        (data.slides || []).forEach((slide, idx) => {
+          const item = createSlideItem(slide, idx, () => {
+            slidesList.removeChild(item);
+            renumberItems(slidesList, '버튼');
+          });
+          slidesList.appendChild(item);
+        });
+
+        // 동영상
+
+        document.getElementById('youtubeId').value =
+          data.video && data.video.youtubeId ? data.video.youtubeId : '';
+
+        // 사진첩
+
+        const photosList = document.getElementById('photosList');
+        photosList.innerHTML = '';
+        (data.photos || []).forEach((photo, idx) => {
+          const item = createPhotoItem(photo, idx, () => {
+            photosList.removeChild(item);
+            renumberItems(photosList, '사진');
+          });
+          photosList.appendChild(item);
+        });
+      } catch (err) {
+        console.error(err);
+        setStatus('content.json을 불러오는 데 실패했습니다. 파일 위치와 권한을 확인하세요.', true);
+      }
+    }
+
+    function renumberItems(listEl, labelPrefix) {
+      Array.from(listEl.querySelectorAll('.item')).forEach((item, idx) => {
+        const titleEl = item.querySelector('.item-title');
+        if (titleEl) titleEl.textContent = labelPrefix + ' #' + (idx + 1);
+      });
+    }
+
+    // --- 현재 폼 내용을 JSON으로 만들기 ---
+    function collectData() {
+      const slidesList = document.getElementById('slidesList');
+      const slideItems = Array.from(slidesList.querySelectorAll('.item'));
+      const slides = slideItems.map(item => ({
+        label: item.querySelector('.slide-label').value,
+        url: item.querySelector('.slide-url').value
+      }));
+
+      const photosList = document.getElementById('photosList');
+      const photoItems = Array.from(photosList.querySelectorAll('.item'));
+      const photos = photoItems.map(item => ({
+        thumb: item.querySelector('.photo-thumb').value,
+        original: item.querySelector('.photo-original').value
+      }));
+
+      const youtubeId = document.getElementById('youtubeId').value.trim();
+
+      const data = {
+        title: document.getElementById('title').value,
+        posterUrl: document.getElementById('posterUrl').value,
+
+        slides,
+
+        video: {}
+      };
+
+      if (youtubeId) data.video.youtubeId = youtubeId;
+
+
+
+      data.photos = photos;
+
+      return data;
+    }
+
+    // --- 항목 추가 버튼 ---
+    document.getElementById('addSlideBtn').addEventListener('click', () => {
+      const slidesList = document.getElementById('slidesList');
+      const index = slidesList.querySelectorAll('.item').length;
+      const item = createSlideItem(
+        {
+          label: '',
+          url: ''
+        },
+        index,
+        () => {
+          slidesList.removeChild(item);
+          renumberItems(slidesList, '버튼');
+        }
+      );
+      slidesList.appendChild(item);
+      renumberItems(slidesList, '버튼');
+    });
+
+    document.getElementById('addPhotoBtn').addEventListener('click', () => {
+      const photosList = document.getElementById('photosList');
+      const index = photosList.querySelectorAll('.item').length;
+      const item = createPhotoItem(
+        {
+          thumb: '',
+          original: ''
+        },
+        index,
+        () => {
+          photosList.removeChild(item);
+          renumberItems(photosList, '사진');
+        }
+      );
+      photosList.appendChild(item);
+      renumberItems(photosList, '사진');
+    });
+
+    async function saveToServer() {
+        try {
+        setStatus('서버에 저장 중입니다...');
+        const data = collectData();
+
+        const res = await fetch('content.json', {
+            method: 'PUT',
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data, null, 2),
+            credentials: 'include' // 🔐 Basic Auth 재사용
+        });
+
+        if (!res.ok) {
+            throw new Error('HTTP ' + res.status);
+        }
+
+        setStatus('<strong>서버에 저장 완료!</strong> (index.html 새로고침으로 확인하세요.)');
+        } catch (err) {
+        console.error(err);
+        setStatus('서버 저장 중 오류가 발생했습니다: ' + err.message, true);
+        }
+    }   
+
+    document.getElementById('saveServerBtn').addEventListener('click', saveToServer);
+
+    // 초기 로드
+    loadContent();
+  </script>
+</body>
+</html>
