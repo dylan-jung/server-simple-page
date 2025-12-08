@@ -257,6 +257,15 @@
     </div>
 
     <div class="card">
+        <h2>💾 저장</h2>
+        <button class="btn" type="button" id="saveServerBtn">서버에 저장하기</button>
+        <p class="subtitle">* 서버에 저장하기 버튼을 눌러야 변경사항이 적용됩니다.</p>
+        <p class="status" id="status"></p>
+    </div>
+
+    <hr />
+
+    <div class="card">
       <h2>📊 설문조사 결과</h2>
       <p class="subtitle">제출된 설문조사 응답을 엑셀 파일로 다운로드합니다.</p>
       
@@ -268,13 +277,6 @@
       
       <button class="btn" type="button" id="downloadExcelBtn">📥 엑셀 다운로드</button>
       <p class="status" id="excelStatus"></p>
-    </div>
-
-    <div class="card">
-        <h2>💾 저장</h2>
-        <button class="btn" type="button" id="saveServerBtn">서버에 저장하기</button>
-        <p class="subtitle">* 서버에 저장하기 버튼을 눌러야 변경사항이 적용됩니다.</p>
-        <p class="status" id="status"></p>
     </div>
   </div>
 
@@ -485,7 +487,7 @@
             throw new Error('HTTP ' + res.status);
         }
 
-        setStatus('<strong>서버에 저장 완료!</strong> (index.html 새로고침으로 확인하세요.)');
+        setStatus('<strong>서버에 저장 완료!</strong> (새로고침으로 확인하세요.)');
         } catch (err) {
         console.error(err);
         setStatus('서버 저장 중 오류가 발생했습니다: ' + err.message, true);
@@ -546,14 +548,14 @@
                 const r = await fetch('/answers/' + file.name);
                 if (r.ok) {
                     const data = await r.json();
-                    
-                    // Flatten structure for Excel
                     const row = {
                         Name: data.name,
                         Email: data.email,
-                        Satisfied: data.answers?.satisfaction,
-                        LikedMost: data.answers?.likedMost,
-                        Suggestions: data.answers?.suggestions,
+                        Q1: data.answers.q1,
+                        Q2: data.answers.q2,
+                        Q3: data.answers.q3,
+                        Q4: data.answers.q4,
+                        Q5: data.answers.q5,
                         SubmittedAt: data.submittedAt
                     };
                     answers.push(row);
