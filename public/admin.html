@@ -257,12 +257,29 @@
     </div>
 
     <div class="card">
+      <h2>📊 설문조사 결과</h2>
+      <p class="subtitle">제출된 설문조사 응답을 엑셀 파일로 다운로드합니다.</p>
+      
+      <div class="row">
+        <div>
+          <label>응답 수: <span id="responseCount">...</span></label>
+        </div>
+      </div>
+      
+      <button class="btn" type="button" id="downloadExcelBtn">📥 엑셀 다운로드</button>
+      <p class="status" id="excelStatus"></p>
+    </div>
+
+    <div class="card">
         <h2>💾 저장</h2>
         <button class="btn" type="button" id="saveServerBtn">서버에 저장하기</button>
         <p class="subtitle">* 서버에 저장하기 버튼을 눌러야 변경사항이 적용됩니다.</p>
         <p class="status" id="status"></p>
     </div>
   </div>
+
+  <!-- SheetJS for Excel export -->
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
 
   <script>
     const statusEl = document.getElementById('status');
@@ -477,8 +494,93 @@
 
     document.getElementById('saveServerBtn').addEventListener('click', saveToServer);
 
+    // --- 엑셀 다운로드 기능 ---
+    async function loadSurveyStats() {
+      const status = document.getElementById('excelStatus');
+      const countEl = document.getElementById('responseCount');
+      
+      try {
+        countEl.textContent = '확인 중...';
+        // /answers/ directory autoindex json
+        const res = await fetch('/answers/');
+        if (!res.ok) {
+           if(res.status === 404) {
+             countEl.textContent = '0 (저장소 없음)';
+             return;
+           }
+           throw new Error('응답 목록을 가져올 수 없습니다.');
+        }
+        
+        const files = await res.json();
+        // autoindex returns a list of objects. filter for .json files
+        const jsonFiles = files.filter(f => f.name && f.name.endsWith('.json'));
+        countEl.textContent = jsonFiles.length + ' 건';
+        
+      } catch (err) {
+        console.error(err);
+        countEl.textContent = '에러';
+        // status.textContent = '목록 로드 실패: ' + err.message;
+      }
+    }
+
+    document.getElementById('downloadExcelBtn').addEventListener('click', async () => {
+      const status = document.getElementById('excelStatus');
+      status.textContent = '데이터를 수집 중입니다...';
+
+      try {
+        // 1. Get file list
+        const res = await fetch('/answers/');
+        if (!res.ok) throw new Error('응답 목록을 가져올 수 없습니다. 권한이나 경로를 확인하세요.');
+        const files = await res.json();
+        const jsonFiles = files.filter(f => f.name && f.name.endsWith('.json'));
+
+        if (jsonFiles.length === 0) {
+            status.textContent = '다운로드할 데이터가 없습니다.';
+            return;
+        }
+
+        // 2. Fetch all JSON contents
+        const answers = [];
+        for (const file of jsonFiles) {
+            try {
+                const r = await fetch('/answers/' + file.name);
+                if (r.ok) {
+                    const data = await r.json();
+                    
+                    // Flatten structure for Excel
+                    const row = {
+                        Name: data.name,
+                        Email: data.email,
+                        Satisfied: data.answers?.satisfaction,
+                        LikedMost: data.answers?.likedMost,
+                        Suggestions: data.answers?.suggestions,
+                        SubmittedAt: data.submittedAt
+                    };
+                    answers.push(row);
+                }
+            } catch (e) {
+                console.error('Failed to load ' + file.name, e);
+            }
+        }
+
+        // 3. Create Excel
+        const worksheet = XLSX.utils.json_to_sheet(answers);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Survey Responses");
+        
+        // 4. Download
+        XLSX.writeFile(workbook, "survey_responses.xlsx");
+        status.textContent = '다운로드 완료!';
+
+      } catch (err) {
+        console.error(err);
+        status.textContent = '엑셀 생성 중 오류 발생: ' + err.message;
+      }
+    });
+
     // 초기 로드
     loadContent();
+    loadSurveyStats();
   </script>
 </body>
 </html>

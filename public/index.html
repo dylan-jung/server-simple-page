@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>행사 안내 페이지</title>
+  <title>Event Page</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -214,13 +214,13 @@
 <body>
   <div class="page">
     <header>
-      <h1 id="event-title">행사 제목 로딩 중...</h1>
+      <h1 id="event-title">Loading...</h1>
     </header>
 
     <!-- 1) 포스터 -->
     <section id="poster">
       <h2>
-        포스터
+        Poster
       </h2>
       <div class="poster-wrapper">
         <img id="poster-image" src="" alt="포스터" />
@@ -230,7 +230,7 @@
     <!-- 2) 발표자료 다운로드 -->
     <section id="slides">
       <h2>
-        발표자료 다운로드
+        Download
       </h2>
       <div class="btn-row" id="slides-buttons"></div>
     </section>
@@ -238,13 +238,13 @@
     <!-- 3) 녹화 영상 (YouTube) -->
     <section id="video">
       <h2>
-        녹화 영상
+        Video
       </h2>
       <div class="video-wrapper">
         <iframe
           id="video-iframe"
           src=""
-          title="행사 녹화 영상"
+          title="Video"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowfullscreen
         ></iframe>
@@ -254,7 +254,7 @@
     <!-- 4) 사진첩 -->
     <section id="gallery">
       <h2>
-        사진첩
+        Gallery
       </h2>
       <div class="gallery-grid" id="gallery-grid"></div>
     </section>
@@ -268,7 +268,7 @@
     async function loadContent() {
       const status = document.getElementById('status-message');
       try {
-        status.textContent = '내용을 불러오는 중입니다...';
+        status.textContent = 'Loading...';
 
         const res = await fetch('content.json?cache=' + Date.now());
         if (!res.ok) throw new Error('content.json을 불러오지 못했습니다.');
@@ -327,7 +327,7 @@
 
             const img = document.createElement('img');
             img.src = photo.thumb || photo.original || '';
-            img.alt = '행사 사진';
+            img.alt = 'photo';
             
             a.appendChild(img);
             div.appendChild(a);
@@ -340,7 +340,7 @@
 
       } catch (err) {
         console.error(err);
-        status.textContent = '내용을 불러오는 중 오류가 발생했습니다. content.json을 확인해주세요.';
+        status.textContent = 'Error loading content. Please check content.json.';
       }
     }
 
