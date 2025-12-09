@@ -130,6 +130,11 @@
             </div>
 
             <div class="form-group">
+                <label for="organization">Organization</label>
+                <input type="text" id="organization" name="organization" required placeholder="Your Organization">
+            </div>
+
+            <div class="form-group">
                 <label for="email">Email</label>
                 <input type="email" id="email" name="email" required placeholder="your.email@example.com">
                 <div class="error-message" id="emailError">Please enter a valid email address.</div>
@@ -259,9 +264,10 @@
             btn.textContent = 'Submitting...';
 
             const name = document.getElementById('name').value.trim();
+            const organization = document.getElementById('organization').value.trim();
             const email = document.getElementById('email').value.trim();
             
-            if (!email || !name) {
+            if (!email || !name || !organization) {
                 alert('Please fill in all required fields.');
                 btn.disabled = false;
                 btn.textContent = originalText;
@@ -284,6 +290,7 @@
 
             const data = {
                 name,
+                organization,
                 email,
                 answers: {
                     q1: parseInt(q1),

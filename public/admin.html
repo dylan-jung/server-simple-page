@@ -257,6 +257,26 @@
     </div>
 
     <div class="card">
+        <h2>🔗 링크 관리</h2>
+        
+        <h3>링크 목록 <span class="chip">links 배열</span></h3>
+        <small>외부 링크를 추가할 수 있습니다.</small>
+
+        <div class="item-list" id="linksList"></div>
+        <button class="btn small secondary" type="button" id="addLinkBtn">+ 링크 추가</button>
+    </div>
+
+    <div class="card">
+        <h2>📄 아티클 관리</h2>
+        
+        <h3>아티클 목록 <span class="chip">articles 배열</span></h3>
+        <small>관련 기사나 블로그 포스트 링크를 추가할 수 있습니다.</small>
+
+        <div class="item-list" id="articlesList"></div>
+        <button class="btn small secondary" type="button" id="addArticleBtn">+ 아티클 추가</button>
+    </div>
+
+    <div class="card">
         <h2>💾 저장</h2>
         <button class="btn" type="button" id="saveServerBtn">서버에 저장하기</button>
         <p class="subtitle">* 서버에 저장하기 버튼을 눌러야 변경사항이 적용됩니다.</p>
@@ -339,6 +359,50 @@
       return div;
     }
 
+    function createLinkItem(link, index, onRemove) {
+        const div = document.createElement('div');
+        div.className = 'item';
+  
+        div.innerHTML = `
+          <div class="item-header">
+            <div class="item-title">링크 #${index + 1}</div>
+            <button type="button" class="btn small secondary">삭제</button>
+          </div>
+          <label>라벨 (Label)</label>
+          <input type="text" class="link-label" value="${link.label || ''}" placeholder="예: Google" />
+  
+          <label>링크 (URL)</label>
+          <input type="text" class="link-url" value="${link.url || ''}" placeholder="예: https://google.com" />
+        `;
+  
+        const removeBtn = div.querySelector('button');
+        removeBtn.addEventListener('click', onRemove);
+  
+        return div;
+      }
+
+    function createArticleItem(article, index, onRemove) {
+        const div = document.createElement('div');
+        div.className = 'item';
+  
+        div.innerHTML = `
+          <div class="item-header">
+            <div class="item-title">아티클 #${index + 1}</div>
+            <button type="button" class="btn small secondary">삭제</button>
+          </div>
+          <label>썸네일 URL (Thumb)</label>
+          <input type="text" class="article-thumb" value="${article.thumb || ''}" placeholder="예: https://example.com/image.png" />
+  
+          <label>링크 (URL)</label>
+          <input type="text" class="article-url" value="${article.url || ''}" placeholder="예: https://example.com/article" />
+        `;
+  
+        const removeBtn = div.querySelector('button');
+        removeBtn.addEventListener('click', onRemove);
+  
+        return div;
+      }
+
     // --- content.json 불러오기 ---
     async function loadContent() {
       try {
@@ -367,10 +431,31 @@
           slidesList.appendChild(item);
         });
 
-        // 동영상
-
+        // 동영상 
         document.getElementById('youtubeId').value =
           data.video && data.video.youtubeId ? data.video.youtubeId : '';
+
+        // 링크
+        const linksList = document.getElementById('linksList');
+        linksList.innerHTML = '';
+        (data.links || []).forEach((link, idx) => {
+            const item = createLinkItem(link, idx, () => {
+                linksList.removeChild(item);
+                renumberItems(linksList, '링크');
+            });
+            linksList.appendChild(item);
+        });
+
+        // 아티클
+        const articlesList = document.getElementById('articlesList');
+        articlesList.innerHTML = '';
+        (data.articles || []).forEach((article, idx) => {
+            const item = createArticleItem(article, idx, () => {
+                articlesList.removeChild(item);
+                renumberItems(articlesList, '아티클');
+            });
+            articlesList.appendChild(item);
+        });
 
         // 사진첩
 
@@ -414,11 +499,19 @@
 
       const youtubeId = document.getElementById('youtubeId').value.trim();
 
+      const linksList = document.getElementById('linksList');
+      const linkItems = Array.from(linksList.querySelectorAll('.item'));
+      const links = linkItems.map(item => ({
+        label: item.querySelector('.link-label').value,
+        url: item.querySelector('.link-url').value
+      }));
+
       const data = {
         title: document.getElementById('title').value,
         posterUrl: document.getElementById('posterUrl').value,
 
         slides,
+        links,
 
         video: {}
       };
@@ -428,6 +521,14 @@
 
 
       data.photos = photos;
+
+      const articlesList = document.getElementById('articlesList');
+      const articleItems = Array.from(articlesList.querySelectorAll('.item'));
+      const articles = articleItems.map(item => ({
+        thumb: item.querySelector('.article-thumb').value,
+        url: item.querySelector('.article-url').value
+      }));
+      data.articles = articles;
 
       return data;
     }
@@ -466,8 +567,45 @@
         }
       );
       photosList.appendChild(item);
+      photosList.appendChild(item);
       renumberItems(photosList, '사진');
     });
+
+    document.getElementById('addLinkBtn').addEventListener('click', () => {
+        const linksList = document.getElementById('linksList');
+        const index = linksList.querySelectorAll('.item').length;
+        const item = createLinkItem(
+          {
+            label: '',
+            url: ''
+          },
+          index,
+          () => {
+            linksList.removeChild(item);
+            renumberItems(linksList, '링크');
+          }
+        );
+        linksList.appendChild(item);
+        renumberItems(linksList, '링크');
+      });
+
+    document.getElementById('addArticleBtn').addEventListener('click', () => {
+        const articlesList = document.getElementById('articlesList');
+        const index = articlesList.querySelectorAll('.item').length;
+        const item = createArticleItem(
+          {
+            thumb: '',
+            url: ''
+          },
+          index,
+          () => {
+            articlesList.removeChild(item);
+            renumberItems(articlesList, '아티클');
+          }
+        );
+        articlesList.appendChild(item);
+        renumberItems(articlesList, '아티클');
+      });
 
     async function saveToServer() {
         try {

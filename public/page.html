@@ -145,6 +145,40 @@
       top: 0;
     }
 
+    .link-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      background: #ffffff;
+      padding: 16px 20px;
+      margin-bottom: 12px;
+      border-radius: 12px;
+      text-decoration: none;
+      color: #111827;
+      font-weight: 600;
+      font-size: 1.05rem;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+      transition: all 0.2s ease;
+    }
+
+    .link-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.05);
+      border-color: #d1d5db;
+    }
+
+    .link-card:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    }
+
+    .link-card .arrow {
+      color: #9ca3af;
+      font-size: 1.2rem;
+    }
+
     .gallery-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
@@ -259,8 +293,22 @@
       <div class="gallery-grid" id="gallery-grid"></div>
     </section>
 
+    <!-- 5) Links -->
+    <section id="links" style="display:none;">
+        <h2>
+            Links
+        </h2>
+        <div id="links-list"></div>
+    </section>
 
-
+    <!-- 6) Articles -->
+    <section id="articles" style="display:none;">
+        <h2>
+            News Articles
+        </h2>
+        <div id="articles-list" class="gallery-grid"></div>
+    </section>
+    
     <p id="status-message" class="message"></p>
   </div>
 
@@ -296,6 +344,55 @@
             a.textContent = slide.label;
             slidesButtons.appendChild(a);
           });
+
+        }
+
+        // Links
+        const linksSection = document.getElementById('links');
+        const linksList = document.getElementById('links-list');
+        linksList.innerHTML = '';
+        if (Array.isArray(data.links) && data.links.length > 0) {
+            linksSection.style.display = 'block';
+            data.links.forEach(link => {
+                const a = document.createElement('a');
+                a.href = link.url;
+                a.className = 'link-card';
+                a.target = '_blank';
+                a.innerHTML = `<span>${link.label}</span><span class="arrow">→</span>`;
+                linksList.appendChild(a);
+            });
+        } else {
+            linksSection.style.display = 'none';
+        }
+
+        // Articles (converted to Gallery view)
+        const articlesSection = document.getElementById('articles');
+        const articlesList = document.getElementById('articles-list');
+        articlesList.innerHTML = '';
+        if (Array.isArray(data.articles) && data.articles.length > 0) {
+            articlesSection.style.display = 'block';
+            data.articles.forEach(article => {
+                const div = document.createElement('div');
+                div.className = 'gallery-item';
+                div.style.position = 'relative';
+
+                const a = document.createElement('a');
+                a.href = article.url || '#';
+                a.target = '_blank';
+                a.style.display = 'block';
+                a.style.width = '100%';
+                a.style.height = '100%';
+
+                const img = document.createElement('img');
+                img.src = article.thumb || ''; // Use thumb from data
+                img.alt = 'article thumbnail';
+                
+                a.appendChild(img);
+                div.appendChild(a);
+                articlesList.appendChild(div);
+            });
+        } else {
+            articlesSection.style.display = 'none';
         }
 
         // 동영상
