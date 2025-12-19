@@ -642,7 +642,7 @@
       try {
         countEl.textContent = '확인 중...';
         // /answers/ directory autoindex json
-        const res = await fetch('/answers/');
+        const res = await fetch('answers/');
         if (!res.ok) {
            if(res.status === 404) {
              countEl.textContent = '0 (저장소 없음)';
@@ -669,7 +669,7 @@
 
       try {
         // 1. Get file list
-        const res = await fetch('/answers/');
+        const res = await fetch('answers/');
         if (!res.ok) throw new Error('응답 목록을 가져올 수 없습니다. 권한이나 경로를 확인하세요.');
         const files = await res.json();
         const jsonFiles = files.filter(f => f.name && f.name.endsWith('.json'));
@@ -683,7 +683,7 @@
         const answers = [];
         for (const file of jsonFiles) {
             try {
-                const r = await fetch('/answers/' + file.name);
+                const r = await fetch('answers/' + file.name);
                 if (r.ok) {
                     const data = await r.json();
                     const row = {

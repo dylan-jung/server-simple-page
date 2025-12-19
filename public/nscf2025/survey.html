@@ -308,7 +308,7 @@
                 const safeEmail = email.replace(/[^a-zA-Z0-9@._-]/g, '_');
                 const filename = safeEmail + '.json';
 
-                const response = await fetch('/answers/' + filename, {
+                const response = await fetch('answers/' + filename, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
@@ -318,7 +318,7 @@
 
                 if (response.ok) {
                     alert('Thank you! Redirecting to home page...');
-                    window.location.href = '/page.html';
+                    window.location.href = 'page.html';
                 } else {
                     throw new Error('Server responded with ' + response.status);
                 }

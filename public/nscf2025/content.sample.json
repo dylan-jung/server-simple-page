@@ -1,0 +1,19 @@
+{
+    "title": "Example Title",
+    "posterUrl": "https://example.com/poster.png",
+    "slides": [
+        {
+            "label": "Example Slide Label",
+            "url": "https://example.com/slide.pdf"
+        }
+    ],
+    "video": {
+        "youtubeId": "exampleId"
+    },
+    "photos": [
+        {
+            "thumb": "https://example.com/thumb.png",
+            "original": "https://example.com/original.png"
+        }
+    ]
+}
